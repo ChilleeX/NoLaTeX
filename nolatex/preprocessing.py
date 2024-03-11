@@ -1,27 +1,38 @@
 import os
 import numpy as np
 import matplotlib.pyplot as plt
+from math import ceil
 import keras
-from keras_cv.layers import Resizing
-from keras_cv.layers import Grayscale
-from keras.utils import image_dataset_from_directory
-from keras.utils import load_img
+from skimage.exposure import is_low_contrast
+from tensorflow.image import rgb_to_grayscale
+from tensorflow.image import resize_with_pad
 
 def image_preprocessing(image, height, width):
     # 1 Convert RBG in Grayscale
-    to_grayscale = Grayscale(output_channels=1)
-    gray_image = to_grayscale(image)
+    gray_image = rgb_to_grayscale(image)
 
     # 2 Resize image to 254x254 with padding
-    resize_img = Resizing(
-        height,
-        width,
-        interpolation="area",
-        crop_to_aspect_ratio=False,
-        pad_to_aspect_ratio=True,
-        bounding_box_format="xywh",
+    resized_image = resize_with_pad(
+        gray_image,
+        target_height=height,
+        target_width=width,
+        method="area",
+        antialias=False
     )
 
-    resized_img = resize_img(gray_image)
+    return resized_image
 
-    return resized_img
+def rm_lowContrast_img(imagelist, faction_threshold=.09):
+
+    n_img = len(imagelist)
+
+    imagelist_good = []
+    imagelist_bad = []
+
+    for i in range(n_img):
+        if is_low_contrast(imagelist[i], fraction_threshold=faction_threshold):
+            imagelist_bad.append(imagelist[i])
+        else:
+            imagelist_good.append(imagelist[i])
+
+    return imagelist_good, imagelist_bad
