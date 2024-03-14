@@ -2,7 +2,8 @@ import os
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from tensorflow.keras.utils import load_img
+import tensorflow as tf
+from tf.keras.utils import load_img
 from preprocessing import image_preprocessing
 
 
@@ -47,7 +48,7 @@ def load_data_to_dict(
     data = resample_json(img_dir, json_path)
 
     # Creating a list of visible Latex characters
-    latex_chars = [data['image_data'][index]['visible_latex_chars'] for index in range(len(data['image_data']))]
+    # OLD latex_chars = [data['image_data'][index]['visible_latex_chars'] for index in range(len(data['image_data']))]
 
     # # Creating Char Dict
     # class_dict = {}
@@ -62,7 +63,7 @@ def load_data_to_dict(
     #     for char in unique_chars:
     #         class_dict[key] = char
 
-     #extracting classes
+    #extracting classes
     classes = [data['image_data'][index]['visible_latex_chars'] for index in range(len(data['image_data']))]
     #Class_ids contais the unique classes
     class_ids = list(set([ele for sublist in classes for ele in sublist]))
@@ -70,7 +71,10 @@ def load_data_to_dict(
     mapping = {string: _ for _, string in enumerate(class_ids)}
     #converting the classes to numbers
     classes = [list(map(mapping.get, ele)) for ele in classes]
-    classes = np.array(classes)
+
+    #TODO might need to be a tensor
+    # classes = np.array(classes)
+
     #defining the right class mapping fo the model(inverse as mapping)
     class_mapping = dict(zip(range(len(class_ids)), class_ids))
 
@@ -88,6 +92,7 @@ def load_data_to_dict(
     img_filenames = list(data['filename'])
 
     # Collect images from filename list
+    # TODO sortout low contrast images
     loadedImages = []
     for filename in img_filenames:
         img = load_img(os.path.join(img_dir, filename))
@@ -95,6 +100,7 @@ def load_data_to_dict(
     preprocessed_images = []
     for image in loadedImages:
         preprocessed_images.append(image_preprocessing(image))
+
 
     data_dict = {
         "images": preprocessed_images,
