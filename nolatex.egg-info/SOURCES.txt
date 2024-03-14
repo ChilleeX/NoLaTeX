@@ -1,8 +1,6 @@
 README.md
 setup.py
 nolatex/__init__.py
-nolatex/params.py
-nolatex/utils.py
 nolatex/website.py
 nolatex.egg-info/PKG-INFO
 nolatex.egg-info/SOURCES.txt
@@ -15,3 +13,4 @@ nolatex/API/fast.py
 nolatex/ml_logic/__init__.py
 nolatex/ml_logic/preprocessing.py
 nolatex/ml_logic/registry.py
+nolatex/ml_logic/utils.py
