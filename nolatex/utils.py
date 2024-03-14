@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import tensorflow as tf
 from tf.keras.utils import load_img
-from preprocessing import image_preprocessing
+from NoLaTeX.nolatex.ml_logic.preprocessing import image_preprocessing
 
 
 def loadImagesAsList(
