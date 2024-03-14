@@ -10,7 +10,7 @@ def load_dataset(
     img_dir: str, json_path: str,
     low_contrast_threshold: float=.09,
     save_low_contrast_imgs: bool=True
-    ):
+    ) -> tuple[dict, dict, tuple[list, list]]:
 
     ##################################
     # 1 Load initial data from paths #
