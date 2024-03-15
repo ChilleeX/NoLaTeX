@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import os
-from cv2 import threshold, imread
+from cv2 import imread
 from skimage.exposure import is_low_contrast
 from tensorflow import ragged
 from nolatex.ml_logic.preprocessing import image_preprocessing, is_low_contrast_from_path
@@ -49,6 +49,8 @@ def load_dataset(
             preprocessed_img_names.append(filename)
             image = image_preprocessing(img_path)
             preprocessed_imgs.append(image)
+
+    preprocessed_imgs = ragged.constant(preprocessed_imgs)
 
     ##########################################
     # 3 Loading required data from full json #
