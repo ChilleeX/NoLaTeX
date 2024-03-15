@@ -51,6 +51,7 @@ def load_dataset(
             preprocessed_imgs.append(image)
 
     preprocessed_imgs = ragged.constant(preprocessed_imgs)
+    #preprocessed_imgs = preprocessed_imgs.to_tensor()
 
     ##########################################
     # 3 Loading required data from full json #
