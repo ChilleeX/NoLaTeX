@@ -11,15 +11,14 @@ def image_preprocessing(image_path: str) -> np.array:
     # 3 Binarization image
     image_binary = threshold(gray_image, 0, 255, THRESH_BINARY + THRESH_OTSU)
 
-    preprocessed_img = np.expand_dims(image_binary[1], axis=-1)
-    # preprocessed_img = np.dstack((preprocessed_img, preprocessed_img))
-    # preprocessed_img = np.dstack((preprocessed_img, preprocessed_img))
+    preprocessed_img_1c = np.expand_dims(image_binary[1], axis=-1)
+    preprocessed_img_2c = np.dstack((preprocessed_img_1c, preprocessed_img_1c))
+    preprocessed_img = np.dstack((preprocessed_img_2c, preprocessed_img_1c))
 
     # #Creating two dummy channel with zeros
     # dummy_channels = np.ones((preprocessed_img.shape[0],preprocessed_img.shape[1],2),dtype=int)
     # #Stacking dummy channels into the image
     # preprocessed_img = np.dstack((preprocessed_img, dummy_channels))
-
 
     return preprocessed_img
 

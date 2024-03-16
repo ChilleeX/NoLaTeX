@@ -70,11 +70,13 @@ def load_dataset(
 
     bboxs = []
     for img_pos in range(len(json_ds['image_data'])):
-        X = json_ds['image_data'][img_pos]['xmins_raw']
-        Y = json_ds['image_data'][img_pos]['ymins_raw']
-        W = np.array(json_ds['image_data'][img_pos]['xmaxs_raw']) - np.array(json_ds['image_data'][img_pos]['xmins_raw'])
-        H = np.array(json_ds['image_data'][img_pos]['ymaxs_raw']) - np.array(json_ds['image_data'][img_pos]['ymins_raw'])
-        bbox = [[X[i],Y[i],W[i],H[i]] for i in range(len(X))]
+        X1 = json_ds['image_data'][img_pos]['xmins_raw']
+        Y1 = json_ds['image_data'][img_pos]['ymins_raw']
+        X2 = json_ds['image_data'][img_pos]['xmaxs_raw']
+        Y2 = json_ds['image_data'][img_pos]['ymaxs_raw']
+        #W = np.array(json_ds['image_data'][img_pos]['xmaxs_raw']) - np.array(json_ds['image_data'][img_pos]['xmins_raw'])
+        #H = np.array(json_ds['image_data'][img_pos]['ymaxs_raw']) - np.array(json_ds['image_data'][img_pos]['ymins_raw'])
+        bbox = [[X1[i],Y1[i],X2[i],Y2[i]] for i in range(len(X1))]
         bboxs.append(bbox)
     bboxs = ragged.constant(bboxs)
 
