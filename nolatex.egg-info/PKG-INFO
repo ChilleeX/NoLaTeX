@@ -4,3 +4,18 @@ Version: 0.0.1
 Summary: NoLaTeX Model (api_pred)
 Author: Diego Beran, Philipp Bosler, Artur Marcon
 License: MIT
+Requires-Dist: pytest
+Requires-Dist: pylint
+Requires-Dist: ipdb
+Requires-Dist: jupyterlab
+Requires-Dist: numpy
+Requires-Dist: pandas
+Requires-Dist: matplotlib
+Requires-Dist: seaborn
+Requires-Dist: scikit-learn
+Requires-Dist: tensorflow
+Requires-Dist: opencv-python
+Requires-Dist: keras-cv
+Requires-Dist: scikit-image
+Requires-Dist: streamlit
+Requires-Dist: requests

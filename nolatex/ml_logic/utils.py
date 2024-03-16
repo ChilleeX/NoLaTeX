@@ -57,7 +57,7 @@ def load_dataset(
     # 3 Loading required data from full json #
     ##########################################
 
-    uuids = [file.replace('.jpg','') for file in dir_files]
+    uuids = [file.replace('.jpg','') for file in preprocessed_img_names]
     matches = json["uuid"].isin(uuids)
     indices = np.where(matches)[0]
     index_list = indices.tolist()
@@ -71,9 +71,9 @@ def load_dataset(
     bboxs = []
     for img_pos in range(len(json_ds['image_data'])):
         X1 = json_ds['image_data'][img_pos]['xmins_raw']
-        Y1 = json_ds['image_data'][img_pos]['ymins_raw']
+        Y1 = json_ds['image_data'][img_pos]['ymaxs_raw']
         X2 = json_ds['image_data'][img_pos]['xmaxs_raw']
-        Y2 = json_ds['image_data'][img_pos]['ymaxs_raw']
+        Y2 = json_ds['image_data'][img_pos]['ymins_raw']
         #W = np.array(json_ds['image_data'][img_pos]['xmaxs_raw']) - np.array(json_ds['image_data'][img_pos]['xmins_raw'])
         #H = np.array(json_ds['image_data'][img_pos]['ymaxs_raw']) - np.array(json_ds['image_data'][img_pos]['ymins_raw'])
         bbox = [[X1[i],Y1[i],X2[i],Y2[i]] for i in range(len(X1))]
