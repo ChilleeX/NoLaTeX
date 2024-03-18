@@ -1,48 +1,43 @@
 import os
-import time
-
-from colorama import Fore, Style
-from tensorflow.keras.models import load_model
-from tensorflow.keras.models import save
-
-def save_model(model: keras.Model = None, model_dir: str) -> None:
-    """
-    Persist trained model locally on the hard drive at f"{model_dir}/{timestamp}.h5"
-    """
-
-    timestamp = time.strftime("%Y%m%d-%H%M%S")
-
-    # Save model locally
-    model_path = os.path.join(model_dir, f"{timestamp}.h5")
-    save(model_path)
-
-    print(f"✅ Model saved locally at {model_path}")
-    return None
+import onnxruntime as rt
+import numpy as np
+import cv2
+import json
+import matplotlib.pyplot as plt
 
 
-def load_model(model_path: str) -> keras.Model:
-    """
-    Return a saved model:
-    - locally (latest one in alphabetical order)
-    Return None (but do not Raise) if no model is found
 
-    """
-    print(Fore.BLUE + f"\nLoading latest model from {model_path}..." + Style.RESET_ALL)
 
-    # Get the latest model version name by the timestamp on disk
-    # local_model_directory = os.path.join(LOCAL_REGISTRY_PATH, "models")
-    # local_model_paths = glob.glob(f"{local_model_directory}/*")
+def resize(img, w=256, h=256):
+    p = max(img.shape[:2] / np.array([h, w]))
+    s = img.shape[:2]
+    r = s / p
 
-    if not model_path:
-        return None
+    img = cv2.resize(img, (int(r[1]), int(r[0])))
 
-    # most_recent_model_path_on_disk = sorted(local_model_paths)[-1]
+    re = np.zeros((h, w, 3))
+    offset = np.array((np.array(re.shape[:2]) - np.array(img.shape[:2])) / 2, dtype=np.int32)
+    re[offset[0]:offset[0] + img.shape[0], offset[1]:offset[1] + img.shape[1]] = img
+    return re
 
-    # print(Fore.BLUE + f"\nLoad latest model from disk..." + Style.RESET_ALL)
+def load(image_file, w, h):
+    i = cv2.imread(image_file)[...,::-1]
+    input_image = resize(i, w, h) / 255
+    return input_image[None].astype(np.float32)
 
-    # TODO Double-check correctload function
-    latest_model = load_model(model_path)
 
-    print("✅ Model loaded from local disk")
+def make_prediction(image_path):
 
-    return latest_model
+    ltx_index = json.load((open('/home/diegoberan/code/ChilleeX/NoLaTeX/nolatex/ml_logic/keys.json')))
+    providers = ['CPUExecutionProvider']
+    model = rt.InferenceSession('/home/diegoberan/code/ChilleeX/NoLaTeX/nolatex/ml_logic/model.onnx', providers=providers)
+    output_name = model.get_outputs()[0].name
+    input_name = model.get_inputs()[0].name
+
+    img = load(image_path, w=1024, h=192)
+    res = model.run([output_name], {input_name: img})[0][0]
+    res = np.argmax(res, axis=1)
+
+    l = ''.join([ltx_index[str(x - 1)] if x != 0 else ' ' for x in res])
+
+    return l

@@ -1,45 +1,43 @@
 import streamlit as st
+import matplotlib.pyplot as plt
+import streamlit.components.v1 as components
+from PIL import Image
+import sympy as sp
+import base64
+#from ml_logic import preprocessing as pp
+from API import fast
 import requests
-
 '''
-# Taxi Fare Predictions
+## Latex Code Prediction Website
 '''
+# def convert_to_latex(image):
 
-'''
-## Details of the ride
-'''
-with st.form("my_form"):
-    pickup_date = st.date_input("Pick-up Date")
-    pickup_time = st.time_input("Pick-up Time")
-    pickup_datetime = str(pickup_date) + " " + str(pickup_time)
-
-    pickup_longitude =st.number_input("Pick-up Longitude", value=40.7614327, step=.0000001, format='%.7f')
-    pickup_latitude = st.number_input("Pick-up Latitude", value=-73.9798156, step=.0000001, format='%.7f')
-
-    dropoff_longitude =st.number_input("Drop-off Longitude", value=40.6513111, step=.0000001, format='%.7f')
-    dropoff_latitude = st.number_input("Drop-off Latitude", value=-73.8803331, step=.0000001, format='%.7f')
-
-    passenger_count = st.slider("Number of Passengers", min_value=1, max_value=8, value=2)
-
-    # Every form must have a submit button.
-    submitted = st.form_submit_button("Submit")
-    if submitted:
-        "---"
-        url = 'https://taxifare.lewagon.ai/predict'
-
-        params = {
-            'pickup_datetime': pickup_datetime,
-            'pickup_longitude': pickup_longitude,
-            'pickup_latitude': pickup_latitude,
-            'dropoff_longitude': dropoff_longitude,
-            'dropoff_latitude': dropoff_latitude,
-            'passenger_count': passenger_count
-        }
-
-        r = requests.get(url, params=params)
-        pred_fare = round(float(dict(r.json())['fare']), 2)
-
-        '''
-        ## Your Prediction
-        '''
-        st.markdown(f"**Fare:** ***{pred_fare}***")
+#     # conversion logic here
+#     #latex_characters = fast.predict(uploadedImage=image)
+#     #return latex_characters
+#     return "Latex code"
+def about_us():
+    st.title("About The Project")
+    components.iframe("https://docs.google.com/presentation/d/e/2PACX-1vRqsZjvgTuxgNIlAySRLcN0V4XzzRh8Hy_J5_VWxuD-P2c7glDs8szlXy5vZCBVnFxzPA11ApCkLueF/embed?start=false&loop=false&delayms=3000", width=960, height=569)
+def main():
+    st.sidebar.title("Navigation")
+    page = st.sidebar.radio("Go to", ["Convert to LaTeX", "About The Project"])
+    if page == "Convert to LaTeX":
+        st.title("Image to LaTeX Converter")
+        uploaded_file = st.file_uploader("Upload Picture", type=["png", "jpg", "jpeg"])
+        if uploaded_file is not None:
+            encoded_image = base64.b64encode(uploaded_file.getvalue()).decode('utf-8')
+            image = Image.open(uploaded_file)
+            st.image(image, caption="Uploaded Picture", use_column_width=True)
+            if st.button("Convert to LaTeX"):
+                request = requests.post("http://127.0.0.1:8000/predict", json={"image_json":encoded_image})
+                result = request.json()
+                latex_code = result["latex"]
+                #latex_code = convert_to_latex(image)
+                st.subheader("Latex Code:")
+                st.code(latex_code, language="latex")
+                st.markdown(f"# ${latex_code}$")
+    elif page == "About The Project":
+        about_us()
+if __name__ == "__main__":
+    main()
